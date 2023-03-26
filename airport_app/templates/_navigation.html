@@ -1,5 +1,5 @@
 <nav>
-    {% for menu_item in [] %}
+    {% for menu_item in ["staff_directory.index"] %}
         <a href="{{ url_for(menu_item) }}">{{ menu_item|upper }}</a>
     {% endfor %}
 </nav>
