@@ -6,12 +6,7 @@ This lists all current aircraft staff registered with this airport.
 
 {% for i in range(num_entries)%}
 <div>
-    <h4>{{ first_names[i] }} {{  last_names[i] }}</h4>
-    Employee code: {{ employee_codes[i] }}<br>
-    Phone: {{ phone_nos[i] }}<br>
-    Email: {{ emails[i] }}<br>
-    Address: {{ home_addresses[i] }}<br>
-    Salary: £{{ salaries[i] }}
+    <h4><a href="{{ url_for('staff_directory.view', personal_ID=personal_IDs[i]) }}">{{ first_names[i] }} {{  last_names[i] }}</a></h4>
 </div>
 {% endfor %}
 {% endblock content %}
