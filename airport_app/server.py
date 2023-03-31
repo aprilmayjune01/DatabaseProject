@@ -12,10 +12,13 @@ import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response, url_for
+# Import other files from this project
+import staff_directory
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
+app.register_blueprint(staff_directory.bp)
 
 
 #
@@ -75,6 +78,7 @@ def before_request():
 		import traceback; traceback.print_exc()
 		g.conn = None
 
+
 @app.teardown_request
 def teardown_request(exception):
 	"""
@@ -86,20 +90,6 @@ def teardown_request(exception):
 	except Exception as e:
 		pass
 
-
-#
-# @app.route is a decorator around index() that means:
-#   run index() whenever the user tries to access the "/" path using a GET request
-#
-# If you wanted the user to go to, for example, localhost:8111/foobar/ with POST or GET then you could use:
-#
-#       @app.route("/foobar/", methods=["POST", "GET"])
-#
-# PROTIP: (the trailing / in the path is important)
-# 
-# see for routing: https://flask.palletsprojects.com/en/1.1.x/quickstart/#routing
-# see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
-#
 @app.route('/')
 def index():
 	""" 
@@ -116,83 +106,29 @@ def index():
 	# DEBUG: this is debugging code to see what request looks like
 	print(request.args)
 
-
-	#
-	# example of a database query
-	#
-	select_query = "SELECT name from test"
-	cursor = g.conn.execute(text(select_query))
-	names = []
-	for result in cursor:
-		names.append(result[0])
-	cursor.close()
-
-	#
-	# Flask uses Jinja templates, which is an extension to HTML where you can
-	# pass data to a template and dynamically generate HTML based on the data
-	# (you can think of it as simple PHP)
-	# documentation: https://realpython.com/primer-on-jinja-templating/
-	#
-	# You can see an example template in templates/index.html
-	#
-	# context are the variables that are passed to the template.
-	# for example, "data" key in the context variable defined below will be 
-	# accessible as a variable in index.html:
-	#
-	#     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-	#     <div>{{data}}</div>
-	#     
-	#     # creates a <div> tag for each element in data
-	#     # will print: 
-	#     #
-	#     #   <div>grace hopper</div>
-	#     #   <div>alan turing</div>
-	#     #   <div>ada lovelace</div>
-	#     #
-	#     {% for n in data %}
-	#     <div>{{n}}</div>
-	#     {% endfor %}
-	#
-	context = dict(data = names)
+	return render_template("index.html")
 
 
-	#
-	# render_template looks in the templates/ folder for files.
-	# for example, the below file reads template/index.html
-	#
-	return render_template("index.html", **context)
-
-#
-# This is an example of a different path.  You can see it at:
-# 
-#     localhost:8111/another
-#
-# Notice that the function name is another() rather than index()
-# The functions for each app.route need to have different names
-#
-@app.route('/another')
-def another():
-	return render_template("another.html")
 
 
 # Example of adding new data to the database
-@app.route('/add', methods=['POST'])
-def add():
-	# accessing form inputs from user
-	name = request.form['name']
+# @app.route('/add', methods=['POST'])
+# def add():
+# 	# accessing form inputs from user
+# 	name = request.form['name']
 	
-	# passing params in for each variable into query
-	params = {}
-	params["new_name"] = name
-	g.conn.execute(text('INSERT INTO test(name) VALUES (:new_name)'), params)
-	g.conn.commit()
-	return redirect('/')
+# 	# passing params in for each variable into query
+# 	params = {}
+# 	params["new_name"] = name
+# 	g.conn.execute(text('INSERT INTO test(name) VALUES (:new_name)'), params)
+# 	g.conn.commit()
+# 	return redirect('/')
 
 
-@app.route('/login')
-def login():
-	abort(401)
-	this_is_never_executed()
+# @app.route('/login')
+# def login():
+# 	abort(401)
+# 	this_is_never_executed()
 
 
 if __name__ == "__main__":
