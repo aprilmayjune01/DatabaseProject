@@ -142,6 +142,9 @@ def index():
 @bp.route("/view/<int:personal_ID>")
 def view(personal_ID):
     context = get_staff(personal_ID)
+    if not context: # If the staff member does not exist
+        return redirect(url_for('staff_directory.index'))
+
     if context['is_pilot']:   # Append pilot information if the staff member is a pilot
         pilot_context = get_pilot(personal_ID)
         context.update(pilot_context)
@@ -149,26 +152,43 @@ def view(personal_ID):
 
 @bp.route("/edit/<int:personal_ID>", methods=['GET', 'POST'])
 def edit(personal_ID):
+    context = get_staff(personal_ID)
+    if not context: # If the staff member does not exist
+        return redirect(url_for('staff_directory.index'))
+    
     if request.method == 'GET':
-        context = get_staff(personal_ID)
         return render_template("edit_staff.html", **context)
     
     if request.method == 'POST':
         first_name = request.form['first_name']
         last_name = request.form['last_name']
         phone_no = request.form['phone_no']
-        email = request.form['email']
+        email = request.form['email'] 
         home_address = request.form['home_address']
         employee_code = request.form['employee_code']
         salary = request.form['salary']
 
-        update_query = f"""
+        update_people_query = f"""
         UPDATE people
-        SET firstName = '{first_name}', lastName = '{last_name}', phone_no = '{phone_no}', email = '{email}', home_address = '{home_address}'
+        SET firstName = '{first_name}', lastName = '{last_name}', phone_no = {phone_no}, email = '{email}', home_address = '{home_address}'
         WHERE personal_ID = {personal_ID}
         """
 
-        g.conn.execute(text(update_query))
+        update_staff_query = f"""
+        UPDATE aircraft_staff
+        SET employee_code = '{employee_code}', salary = {salary}
+        WHERE personal_ID = {personal_ID}
+        """
+
+        try:
+            g.conn.execute(text(update_people_query))
+            g.conn.execute(text(update_staff_query))
+            g.conn.commit()
+        except Exception as e:
+            print(e)
+            context['error'] = "Error: Invalid input. Make sure to enter all fields correctly."
+            return render_template("edit_staff.html", **context)
+
 
         return redirect(url_for('staff_directory.view', personal_ID=personal_ID))
 
@@ -183,3 +203,80 @@ def delete(personal_ID):
     g.conn.commit()
 
     return redirect(url_for('staff_directory.index'))
+
+@bp.route("/create", methods=['GET', 'POST'])
+def create():
+    if request.method == 'GET':
+        return render_template("create_staff.html")
+    
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        phone_no = request.form['phone_no']
+        email = request.form['email'] 
+        home_address = request.form['home_address'] 
+        employee_code = request.form['employee_code'] 
+        salary = request.form['salary'] 
+
+        # Get the personal_ID of the new staff member
+
+        select_query = """
+        SELECT MAX(personal_ID)
+        FROM people
+        """
+
+        cursor = g.conn.execute(text(select_query))
+        for result in cursor:
+            personal_ID = result[0] + 1
+            break  # There should only be one row
+        cursor.close()
+
+
+        # Insert the new staff member into the database tables
+
+        insert_people_query = f"""
+        INSERT INTO people (personal_ID, firstName, lastName, phone_no, email, home_address)
+        VALUES ('{personal_ID}', '{first_name}', '{last_name}', '{phone_no}', '{email}', '{home_address}')
+        """
+
+        insert_aircraft_staff_query = f"""
+        INSERT INTO aircraft_staff (personal_ID, employee_code, salary)
+        VALUES ({personal_ID}, '{employee_code}', {salary})
+        """
+
+        # TODO: Implement pilot-specific fields
+
+        try:
+            g.conn.execute(text(insert_people_query))
+            g.conn.execute(text(insert_aircraft_staff_query))
+            g.conn.commit()
+        except Exception as exception:
+            print(exception)
+            return render_template("create_staff.html", error="Failed to create staff member - make sure to enter all fields correctly")
+
+
+        return redirect(url_for('staff_directory.index'))
+    
+
+
+#################### DEBUGGING FUNCTIONS ####################
+def test_query():
+    """
+    Test function for development and debugging purposes. 
+    Used to access the database.
+    """
+
+
+    select_query = """
+    SELECT *
+    FROM people
+    LEFT JOIN aircraft_staff ON people.personal_ID = aircraft_staff.personal_ID
+    LEFT JOIN pilot ON people.personal_ID = pilot.personal_ID
+    WHERE people.personal_ID = 31
+    """
+
+    cursor = g.conn.execute(text(select_query))
+    print('Results:')
+    for result in cursor:
+        print(result)
+    cursor.close()

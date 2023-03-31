@@ -9,4 +9,8 @@ This lists all current aircraft staff registered with this airport.
     <h4><a href="{{ url_for('staff_directory.view', personal_ID=personal_IDs[i]) }}">{{ first_names[i] }} {{  last_names[i] }}</a></h4>
 </div>
 {% endfor %}
+
+<p>
+    <h3><a href="{{ url_for('staff_directory.create') }}">Add new staff member</a></h3>
+</p>
 {% endblock content %}
