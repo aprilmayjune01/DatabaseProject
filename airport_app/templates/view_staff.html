@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .bottom-three {
+       margin-bottom: 3cm;
+    }
+</style>
+
+<p>
+    <h3>{{first_name}} {{last_name}}</h3>
+    Employee code: {{employee_code}} <br>
+    Phone: {{phone}} <br>
+    Email: {{email}} <br>
+    Address: {{home_address}} <br>
+    Salary: £{{salary}} <br>
+</p>
+
+{% if is_pilot %}
+<p>
+    <h4>Pilot Data</h4>
+    <ul>
+        <li>Eyesight: {{eyesight}}</li> 
+        <li>Flight hours: {{flight_hours}} </li>
+    </ul>
+    <p>
+        <b> Medical conditions</b>
+        <ul>
+            {% for condition in medical_conditions %}
+            <li>{{condition}}</li>
+            {% endfor %}
+        </ul>
+    </p>
+    <p>
+        <b>Certifications</b>
+        <ul>
+            {% for i in range(certification_types|length) %}
+            <li>Certification: {{ certification_types[i] }}. Date of issue: {{ dates_of_issue[i] }}</li>
+            {% endfor %}
+        </ul>
+    </p>
+</p>
+{% endif %}
+
+<p>
+    <a href="{{ url_for('staff_directory.edit', personal_ID=personal_ID) }}">Edit</a>
+    <a href="{{ url_for('staff_directory.delete', personal_ID=personal_ID) }}">Delete</a>
+    <br>
+    <a href="{{ url_for('staff_directory.index') }}">Back to staff directory</a>
+</p>
+{% endblock content %}
