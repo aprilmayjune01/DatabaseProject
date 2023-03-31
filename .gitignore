@@ -2,6 +2,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=flask,python,macos
 
 .vscode
+.vscode/
+*vscode*
 
 ### Flask ###
 instance/*
