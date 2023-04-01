@@ -83,11 +83,59 @@ def view(personal_ID):
 
 @bp.route('/edit/<int:personal_ID>', methods=['GET', 'POST'])
 def edit(personal_ID):
-    pass
+    context = get_passenger(personal_ID)
+    if not context:
+        return redirect(url_for('passenger_directory.index'))
+
+    if request.method == 'GET':
+        return render_template('edit_passenger.html', **context)
+    
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        phone_no = request.form['phone_no']
+        email = request.form['email'] 
+        home_address = request.form['home_address']
+        passport_no = request.form['passport_no']
+
+        update_people_query = f"""
+        UPDATE people
+        SET firstName = '{first_name}', lastName = '{last_name}', phone_no = '{phone_no}', email = '{email}', home_address = '{home_address}'
+        WHERE personal_ID = {personal_ID}
+        """
+
+        update_passenger_query = f"""
+        UPDATE passenger
+        SET passport_no = '{passport_no}'
+        WHERE personal_ID = {personal_ID}
+        """
+
+        try:
+            g.conn.execute(text(update_people_query))
+            g.conn.execute(text(update_passenger_query))
+            g.conn.commit()
+        except Exception as e:
+            print(e)
+            return render_template("edit_passenger.html", error="Error: Could not update passenger. Make sure all fields are filled out correctly.")
+
+        return redirect(url_for('passenger_directory.view',  personal_ID=personal_ID))
 
 @bp.route('/delete/<int:personal_ID>')
 def delete(personal_ID):
-    pass
+    delete_query = f"""
+    DELETE FROM people
+    WHERE personal_ID = {personal_ID}
+    """
+
+    try:
+        g.conn.execute(text(delete_query))
+        g.conn.commit()
+    except Exception as e:
+        print(e)
+        return redirect(url_for('passenger_directory.index', error="Error: Could not delete passenger."))
+        
+    return redirect(url_for('passenger_directory.index'))
+    
 
 @bp.route('/create', methods=['GET', 'POST'])
 def create():
@@ -132,6 +180,6 @@ def create():
             return render_template("create_passenger.html", error="Error: Could not create passenger. Make sure all fields are filled out correctly.")
 
 
-        return redirect(url_for('passenger_directory.index'))
+        return redirect(url_for('passenger_directory.view', personal_ID=personal_ID))
 
 
