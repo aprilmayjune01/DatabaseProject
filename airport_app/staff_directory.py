@@ -170,7 +170,7 @@ def edit(personal_ID):
 
         update_people_query = f"""
         UPDATE people
-        SET firstName = '{first_name}', lastName = '{last_name}', phone_no = {phone_no}, email = '{email}', home_address = '{home_address}'
+        SET firstName = '{first_name}', lastName = '{last_name}', phone_no = '{phone_no}', email = '{email}', home_address = '{home_address}'
         WHERE personal_ID = {personal_ID}
         """
 
@@ -199,8 +199,12 @@ def delete(personal_ID):
     WHERE personal_ID = {personal_ID}
     """
 
-    g.conn.execute(text(delete_query))
-    g.conn.commit()
+    try:
+        g.conn.execute(text(delete_query))
+        g.conn.commit()
+    except Exception as e:
+        print(e)
+        return redirect(url_for('staff_directory.index', error="Error: Could not delete staff member."))
 
     return redirect(url_for('staff_directory.index'))
 
@@ -254,8 +258,7 @@ def create():
             print(exception)
             return render_template("create_staff.html", error="Failed to create staff member - make sure to enter all fields correctly")
 
-
-        return redirect(url_for('staff_directory.index'))
+        return redirect(url_for('staff_directory.view', personal_ID=personal_ID))
     
 
 
