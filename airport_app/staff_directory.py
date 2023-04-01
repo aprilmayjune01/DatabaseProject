@@ -170,7 +170,7 @@ def edit(personal_ID):
 
         update_people_query = f"""
         UPDATE people
-        SET firstName = '{first_name}', lastName = '{last_name}', phone_no = {phone_no}, email = '{email}', home_address = '{home_address}'
+        SET firstName = '{first_name}', lastName = '{last_name}', phone_no = '{phone_no}', email = '{email}', home_address = '{home_address}'
         WHERE personal_ID = {personal_ID}
         """
 
@@ -253,7 +253,6 @@ def create():
         except Exception as exception:
             print(exception)
             return render_template("create_staff.html", error="Failed to create staff member - make sure to enter all fields correctly")
-
 
         return redirect(url_for('staff_directory.index'))
     

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .bottom-three {
+       margin-bottom: 3cm;
+    }
+</style>
+
+<p>
+    <h3>{{ first_name }} {{last_name}}</h3>
+    Phone: {{phone_no}} <br>
+    Email: {{email}} <br>
+    Address: {{home_address}} <br>
+    Passport number: {{passport_no}} <br>
+</p>
+
+<p>
+    <a href="{{ url_for('passenger_directory.edit', personal_ID=personal_ID) }}">Edit</a>
+    <a href="{{ url_for('passenger_directory.delete', personal_ID=personal_ID) }}">Delete</a>
+    <br>
+    <a href="{{ url_for('passenger_directory.index') }}">Back to passenger directory</a>
+</p>
+
+{% endblock %}
