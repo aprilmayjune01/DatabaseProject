@@ -20,7 +20,7 @@
         <label for="weight_limit">Weight Limit</label><br>
         <input type="number" id="weight_limit" name="weight_limit" required><br>
         <label for="passenger_capacity">Passenger Capacity</label><br>
-        <input type="text" id="passenger_capacity" name="passenger_capacity" required><br>
+        <input type="number" id="passenger_capacity" name="passenger_capacity" required><br>
         <label for="is_private">Private</label><br>
         <input type="checkbox" id="is_private" name="is_private" value="1"><br>
 
@@ -28,7 +28,7 @@
     </form>
 
     <script>
-        <!-- This is the JavaScript code that will toggle the visibility of form elements based on the chosen aircraft type. -->
+        // This is the JavaScript code that will toggle the visibility of form elements based on the chosen aircraft type.
         function togglePassengerCapacity() {
             var aircraftType = document.getElementById("aircraft_type").value;
             var passengerCapacity = document.getElementById("passenger_capacity");

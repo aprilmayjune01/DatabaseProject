@@ -36,6 +36,7 @@ def get_aircraft(vessel_ID):
             context['vessel_ID'] = row[0]
             context['fuel_capacity'] = row[1]
             context['domestic'] = row[2]
+            context['model'] = row[3]
             break   # There should only be one row
         cursor.close()
 
@@ -103,7 +104,7 @@ def view(vessel_ID):
     """
 
     context = get_aircraft(vessel_ID)
-    if context is None:
+    if context is None or not context:
         return redirect(url_for('aircraft_directory.index'))    
 
     return render_template('view_aircraft.html', **context)
@@ -132,13 +133,13 @@ def edit(vessel_ID):
         """
 
         # Cargo-specific fields
-        if request.form['type'] == 'cargo':
+        if request.form['aircraft_type'] == 'cargo':
             update_cargo_query = f"""
             UPDATE cargo_aircraft
             SET weight_limit = {request.form['weight_limit']}
             WHERE vessel_ID = {vessel_ID}
             """
-        elif request.form['type'] == 'passenger':
+        elif request.form['aircraft_type'] == 'passenger':
             update_passenger_query = f"""
             UPDATE passenger_aircraft
             SET passenger_capacity = {request.form['passenger_capacity']},
@@ -148,9 +149,9 @@ def edit(vessel_ID):
 
         try:
             g.conn.execute(text(update_query))
-            if request.form['type'] == 'cargo':
+            if request.form['aircraft_type'] == 'cargo':
                 g.conn.execute(text(update_cargo_query))
-            elif request.form['type'] == 'passenger':
+            elif request.form['aircraft_type'] == 'passenger':
                 g.conn.execute(text(update_passenger_query))
             g.conn.commit()
         except Exception as e:
@@ -190,11 +191,15 @@ def create():
     if request.method == 'POST':
         model = request.form['model']
         fuel_capacity = request.form['fuel_capacity']
-        domestic = request.form['domestic']
+        if 'domestic' in request.form:
+            domestic = True
+        else:
+            domestic = False
 
         # Get new vessel_ID
         select_query = """
-        SELECT MAX(vessel_ID) FROM vessel
+        SELECT MAX(vessel_ID) 
+        FROM aircraft
         """
 
         try:
@@ -214,7 +219,7 @@ def create():
         """
 
         # Insert into cargo
-        if request.form['type'] == 'cargo':
+        if request.form['aircraft_type'] == 'cargo':
             weight_limit = request.form['weight_limit']
 
             insert_cargo_query = f"""
@@ -231,9 +236,9 @@ def create():
                 return render_template('create_aircraft.html', error='Error creating aircraft. Please try again.')
             
         # Insert into passenger 
-        elif request.form['type'] == 'passenger':
+        elif request.form['aircraft_type'] == 'passenger':
             passenger_capacity = request.form['passenger_capacity']
-            is_private = request.form['is_private']
+            is_private = bool(request.form['is_private'])
 
             insert_passenger_query = f"""
             INSERT INTO passenger_aircraft (vessel_ID, passenger_capacity, is_private)
