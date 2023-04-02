@@ -221,6 +221,15 @@ def create():
         home_address = request.form['home_address'] 
         employee_code = request.form['employee_code'] 
         salary = request.form['salary'] 
+        if "is_pilot" in request.form:
+            is_pilot = True
+            eyesight = request.form['eyesight']
+            flight_hours = request.form['flight_hours']
+            medical_conditions = request.form.getlist('medical_condition')
+            certification_types = request.form.getlist('certification_type')
+            dates_of_issue = request.form.getlist('certification_date_of_issue')
+        else:
+            is_pilot = False
 
         # Get the personal_ID of the new staff member
 
@@ -248,7 +257,36 @@ def create():
         VALUES ({personal_ID}, '{employee_code}', {salary})
         """
 
-        # TODO: Implement pilot-specific fields
+        if is_pilot:
+            insert_pilot_query = f"""
+            INSERT INTO pilot (personal_ID, eyesight, flight_hours)
+            VALUES ({personal_ID}, '{eyesight}', {flight_hours})
+            """
+
+            g.conn.execute(text(insert_pilot_query))
+
+            for i in range(len(medical_conditions)):
+                insert_medical_condition_query = f"""
+                INSERT INTO pilot_medical_conditions (pilot_ID, medical_condition)
+                VALUES ({personal_ID}, '{medical_conditions[i]}')
+                """
+                try:    # Query must be executed on the fly because the number of medical conditions is variable
+                    g.conn.execute(text(insert_medical_condition_query))
+                except Exception as e:
+                    print(e)
+                    return render_template("create_staff.html", error="Failed to create staff member - make sure to enter all fields correctly")
+            
+            for i in range(len(certification_types)):
+                insert_certification_query = f"""
+                INSERT INTO certification (pilot_ID, certification_type, date_of_issue)
+                VALUES ({personal_ID}, '{certification_types[i]}', '{dates_of_issue[i]}')
+                """
+                try:    # Query must be executed on the fly because the number of certifications is variable
+                    g.conn.execute(text(insert_certification_query))
+                except Exception as e:
+                    print(e)
+                    return render_template("create_staff.html", error="Failed to create staff member - make sure to enter all fields correctly")
+                
 
         try:
             g.conn.execute(text(insert_people_query))
