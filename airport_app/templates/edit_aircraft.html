@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Edit aircraft details</h1>
+
+    <form method="POST" action="{{ url_for('aircraft_directory.edit', vessel_ID=vessel_ID) }}">
+        <h4>Aircraft Details</h4>
+        <label for="model">Model</label><br>
+        <input type="text" id="model" name="model" value="{{ model }}" required><br>
+        <label for="fuel_capacity">Fuel Capacity (liters)</label><br>
+        <input type="number" id="fuel_capacity" name="fuel_capacity" value="{{ fuel_capacity }}" required><br>
+        <label for="domestic">Domestic</label><br>
+        <input type="checkbox" id="domestic" name="domestic" value="1" {% if domestic %}checked{% endif %}><br>
+        <label for="aircraft_type">Aircraft Type</label><br>
+        <select id="aircraft_type" name="aircraft_type" required>
+            <option value="cargo" {% if aircraft_type == "cargo" %}selected{% endif %}>Cargo</option>
+            <option value="passenger" {% if aircraft_type == "passenger" %}selected{% endif %}>Passenger</option>
+        </select><br>
+        <label for="weight_limit">Weight Limit</label><br>
+        <input type="number" id="weight_limit" name="weight_limit" value="{{ weight_limit }}" required><br>
+        <label for="passenger_capacity">Passenger Capacity</label><br>
+        <input type="number" id="passenger_capacity" name="passenger_capacity" value="{{ passenger_capacity }}" required><br>
+        <label for="is_private">Private</label><br>
+        <input type="checkbox" id="is_private" name="is_private" value="1" {% if is_private %}checked{% endif %}><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    {% include "_aircraft_script.html" %}
+{% endblock %}

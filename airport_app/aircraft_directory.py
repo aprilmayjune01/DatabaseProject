@@ -123,27 +123,43 @@ def edit(vessel_ID):
         return render_template('edit_aircraft.html', **context)
 
     if request.method == 'POST':
+        model = request.form['model']
+        fuel_capacity = request.form['fuel_capacity']
+        if 'domestic' in request.form:
+            domestic = True
+        else:
+            domestic = False
+
         # Update the database
         update_query = f"""
         UPDATE aircraft
-        SET model = '{request.form['model']}',
-            fuel_capacity = {request.form['fuel_capacity']},
-            domestic = {request.form['domestic']}
+        SET model = '{model}',
+            fuel_capacity = {fuel_capacity},
+            domestic = {domestic}
         WHERE vessel_ID = {vessel_ID}
         """
 
         # Cargo-specific fields
         if request.form['aircraft_type'] == 'cargo':
+            weight_limit = request.form['weight_limit']
+
             update_cargo_query = f"""
             UPDATE cargo_aircraft
-            SET weight_limit = {request.form['weight_limit']}
+            SET weight_limit = {weight_limit}
             WHERE vessel_ID = {vessel_ID}
             """
+
         elif request.form['aircraft_type'] == 'passenger':
+            passenger_capacity = request.form['passenger_capacity']
+            if 'is_private' in request.form:
+                is_private = True
+            else:
+                is_private = False
+
             update_passenger_query = f"""
             UPDATE passenger_aircraft
-            SET passenger_capacity = {request.form['passenger_capacity']},
-                is_private = {request.form['is_private']}
+            SET passenger_capacity = {passenger_capacity},
+                is_private = {is_private}
             WHERE vessel_ID = {vessel_ID}
             """
 
