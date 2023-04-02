@@ -2,21 +2,31 @@
 
 {% block content %}
 
-    {% if error is defined %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
-
-    <h3>Aircraft Directory</h3>
-    This lists all current aircraft vessels registered with this airport.
-
-    {% for i in range(num_vessels) %}
-    <div>
-        <h4><a href="{{ url_for('aircraft_directory.view', vessel_ID=vessel_IDs[i]) }}">{{ vessel_IDs[i] }}. {{ models[i] }} Airplane</a></h4>
-    </div>
-    {% endfor %}
+    <style>
+        .bottom-three {
+        margin-bottom: 3cm;
+        }
+    </style>
 
     <p>
-        <h3><a href="{{ url_for('aircraft_directory.create') }}">Add new aircraft</a></h3>
+        <h3>{{ vessel_ID }} {{ model }}</h3>
+        Fuel capacity: {{ fuel_capacity }} <br>
+        Domestic: {% if domestic == 1 %} Yes {% else %} No {% endif %} <br>
+        Aircraft type: {{ aircraft_type }} <br>
+
+        {% if aircraft_type == 'cargo' %}
+            Weight limit: {{ weight_limit }} kilograms <br>
+
+        {% elif aircraft_type == 'passenger' %}
+            Passenger capacity: {{ passenger_capacity }} <br>
+            
+            {% if is_private == 1 %}
+                Private Airplane <br>
+            {% else %}
+                Commercial Airplane <br>
+            {% endif %}
+
+        {% endif %}
     </p>
 
 {% endblock %}

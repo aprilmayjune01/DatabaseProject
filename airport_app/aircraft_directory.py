@@ -42,6 +42,7 @@ def get_aircraft(vessel_ID):
         cursor = g.conn.execute(text(select_cargo_query))
         for row in cursor:
             context['weight_limit'] = row[0]
+            context['aircraft_type'] = 'cargo'
             break  # There should only be one row
         cursor.close()
 
@@ -49,6 +50,7 @@ def get_aircraft(vessel_ID):
         for row in cursor:
             context['passenger_capacity'] = row[0]
             context['is_private'] = row[1]
+            context['aircraft_type'] = 'passenger'
             break   # There should only be one row
         cursor.close()
 
