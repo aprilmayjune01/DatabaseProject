@@ -254,7 +254,10 @@ def create():
         # Insert into passenger 
         elif request.form['aircraft_type'] == 'passenger':
             passenger_capacity = request.form['passenger_capacity']
-            is_private = bool(request.form['is_private'])
+            if 'is_private' in request.form:
+                is_private = True
+            else:
+                is_private = False
 
             insert_passenger_query = f"""
             INSERT INTO passenger_aircraft (vessel_ID, passenger_capacity, is_private)
