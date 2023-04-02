@@ -29,4 +29,11 @@
         {% endif %}
     </p>
 
+    <p>
+        <a href="{{ url_for('aircraft_directory.edit', vessel_ID=vessel_ID) }}">Edit</a>
+        <a href="{{ url_for('aircraft_directory.delete', vessel_ID=vessel_ID) }}">Delete</a>
+        <br>
+        <a href="{{ url_for('aircraft_directory.index') }}">Back to aircraft directory</a>
+    </p>
+
 {% endblock %}
