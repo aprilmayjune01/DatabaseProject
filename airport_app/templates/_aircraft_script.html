@@ -1,0 +1,26 @@
+<script>
+    // This is the JavaScript code that will toggle the visibility of form elements based on the chosen aircraft type.
+    function togglePassengerCapacity() {
+        var aircraftType = document.getElementById("aircraft_type").value;
+        var passengerCapacity = document.getElementById("passenger_capacity");
+        var weightLimit = document.getElementById("weight_limit");
+        var isPrivate = document.getElementById("is_private");
+
+        if (aircraftType == "passenger") {
+            weightLimit.disabled = true;
+            passengerCapacity.disabled = false;
+            isPrivate.disabled = false;
+        } else {
+            weightLimit.disabled = false;
+            passengerCapacity.disabled = true;
+            isPrivate.disabled = true;
+        }
+        // Reset the values of the form elements.
+        weightLimit.value = "";
+        passengerCapacity.value = "";
+        isPrivate.checked = false;
+    }
+
+    document.getElementById("aircraft_type").addEventListener("change", togglePassengerCapacity);
+    togglePassengerCapacity();  // Call this function to set the initial state of the form.
+</script>

@@ -21,23 +21,28 @@ def get_staff(personal_ID):
 
     context = dict()
 
-    cursor = g.conn.execute(text(select_query))
-    for row in cursor:
-        context['personal_ID'] = personal_ID
-        context['first_name'] = row[0]
-        context['last_name'] = row[1]
-        context['phone_no'] = row[2]
-        context['email'] = row[3]
-        context['home_address'] = row[4]
-        context['employee_code'] = row[5]
-        context['salary'] = row[6]
+    try:
+        cursor = g.conn.execute(text(select_query))
+        for row in cursor:
+            context['personal_ID'] = personal_ID
+            context['first_name'] = row[0]
+            context['last_name'] = row[1]
+            context['phone_no'] = row[2]
+            context['email'] = row[3]
+            context['home_address'] = row[4]
+            context['employee_code'] = row[5]
+            context['salary'] = row[6]
 
-        if row[7] is not None:  # If the staff member is a pilot
-            context['is_pilot'] = True
-        else:
-            context['is_pilot'] = False
-        break   # There should only be one row
-    cursor.close()
+            if row[7] is not None:  # If the staff member is a pilot
+                context['is_pilot'] = True
+            else:
+                context['is_pilot'] = False
+            break   # There should only be one row
+        cursor.close()
+
+    except Exception as e:
+        print(e)
+        return None
 
     return context
 
@@ -142,7 +147,7 @@ def index():
 @bp.route("/view/<int:personal_ID>")
 def view(personal_ID):
     context = get_staff(personal_ID)
-    if not context: # If the staff member does not exist
+    if context is None: # If the staff member does not exist
         return redirect(url_for('staff_directory.index'))
 
     if context['is_pilot']:   # Append pilot information if the staff member is a pilot
@@ -153,7 +158,7 @@ def view(personal_ID):
 @bp.route("/edit/<int:personal_ID>", methods=['GET', 'POST'])
 def edit(personal_ID):
     context = get_staff(personal_ID)
-    if not context: # If the staff member does not exist
+    if context is None: # If the staff member does not exist
         return redirect(url_for('staff_directory.index'))
     
     if request.method == 'GET':

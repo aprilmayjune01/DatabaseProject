@@ -3,10 +3,6 @@
 {% block content %}
     <h1>Edit Passenger Details</h1>
 
-    {% if error is defined %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
-
     <form method="POST" action="{{ url_for('passenger_directory.edit', personal_ID=personal_ID) }}">
         <label for="first_name">First Name</label><br>
         <input type="text" id="first_name" name="first_name" value="{{ first_name }}" required><br>
