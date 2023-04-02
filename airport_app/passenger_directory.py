@@ -20,20 +20,22 @@ def get_passenger(personal_ID):
 
     context = dict()
 
-    cursor = g.conn.execute(text(select_query))
-    for row in cursor:
-        context['personal_ID'] = personal_ID
-        context['first_name'] = row[0]
-        context['last_name'] = row[1]
-        context['phone_no'] = row[2]
-        print(f'In cursor: {row[2]}')
-        context['email'] = row[3]
-        context['home_address'] = row[4]
-        context['passport_no'] = row[5]
-        break   # There should only be one row
-    cursor.close()
-
-    print(f'In context: {context["phone_no"]}')
+    try:
+        cursor = g.conn.execute(text(select_query))
+        for row in cursor:
+            context['personal_ID'] = personal_ID
+            context['first_name'] = row[0]
+            context['last_name'] = row[1]
+            context['phone_no'] = row[2]
+            context['email'] = row[3]
+            context['home_address'] = row[4]
+            context['passport_no'] = row[5]
+            break   # There should only be one row
+        cursor.close()
+        
+    except Exception as e:
+        print(e)
+        return None
 
     return context
 
@@ -76,15 +78,19 @@ def index():
 @bp.route('/view/<int:personal_ID>')
 def view(personal_ID):
     context = get_passenger(personal_ID)
-    if not context:
+    if context is None:
         return redirect(url_for('passenger_directory.index'))
     
     return render_template('view_passenger.html', **context)
 
 @bp.route('/edit/<int:personal_ID>', methods=['GET', 'POST'])
 def edit(personal_ID):
+    """
+    Allows the user to edit the passenger's information.
+    """
+
     context = get_passenger(personal_ID)
-    if not context:
+    if context is None:
         return redirect(url_for('passenger_directory.index'))
 
     if request.method == 'GET':
@@ -122,6 +128,10 @@ def edit(personal_ID):
 
 @bp.route('/delete/<int:personal_ID>')
 def delete(personal_ID):
+    """
+    Deletes the passenger from the database.
+    """
+            
     delete_query = f"""
     DELETE FROM people
     WHERE personal_ID = {personal_ID}
@@ -155,11 +165,16 @@ def create():
         FROM people
         """
 
-        cursor = g.conn.execute(text(select_query))
-        for result in cursor:
-            personal_ID = result[0] + 1
-            break   # There should only be one row
-        cursor.close()
+        try:
+            cursor = g.conn.execute(text(select_query))
+            for result in cursor:
+                personal_ID = result[0] + 1
+                break   # There should only be one row
+            cursor.close()
+        except Exception as e:
+            print(e)
+            return render_template("create_passenger.html", error="Error: Could not create passenger. Please try again.")
+        
 
         insert_people_query = f"""
         INSERT INTO people 
