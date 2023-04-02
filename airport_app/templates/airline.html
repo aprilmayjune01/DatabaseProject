@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Airline Directory</h3>
+This is a list of all airlines registered with this airport.
+
+{% for i in range(num_entries)%}
+<div>
+    <h4>{{airline_name[i]}}</h4>
+
+    Airline ID: {{ airline_id[i]}}<br>
+    Locations based in: {{ locations_based_in[i]}}<br>
+    Phone: {{ phone_no [i]}}<br>
+    Email: {{ email[i] }}<br>
+
+
+</div>
+{% endfor %}
+{% endblock content %}
