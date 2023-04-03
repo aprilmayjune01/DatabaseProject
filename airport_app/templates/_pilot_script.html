@@ -1,39 +1,11 @@
 <script>
     // This script is used to toggle the pilot-specific fields when the "Is Pilot" checkbox is checked/unchecked
     function togglePilot() {
-        var eyesight = document.getElementById("eyesight");
-        var flightHours = document.getElementById("flight_hours");
-        var addMedicalConditionButton = document.getElementById("add_medical_condition");
-        var addCertificationButton = document.getElementById("add_certification");
-        var medicalConditionLabels = document.getElementsByName("medical_condition_label");
-        var medicalConditions = document.getElementsByName("medical_condition");
-        var certificationLabels = document.getElementsByName("certification_label");
-        var certificationTypes = document.getElementsByName("certification_type");
-        var dateOfIssueLabels = document.getElementsByName("date_of_issue_label");
-        var certificationDatesOfIssue = document.getElementsByName("certification_date_of_issue");
-
-        if (document.getElementById("is_pilot").checked) {  // If the checkbox is checked, enable the pilot-specific fields
-            eyesight.disabled = false;
-            flightHours.disabled = false;
-            addMedicalConditionButton.disabled = false;
-            addCertificationButton.disabled = false;
-        } 
-        
-        else {    // If the checkbox is unchecked, disable the pilot-specific fields
-            eyesight.disabled = true;
-            flightHours.disabled = true;
-            addMedicalConditionButton.disabled = true;
-            addCertificationButton.disabled = true;
-            for (var i = medicalConditions.length-1; i >= 0; i--) {
-                medicalConditionLabels[i].remove();
-                medicalConditions[i].remove();
-            }
-            for (var i = certificationTypes.length-1; i >= 0; i--) {
-                certificationLabels[i].remove();
-                certificationTypes[i].remove();
-                dateOfIssueLabels[i].remove();
-                certificationDatesOfIssue[i].remove();
-            }
+        var pilotDetails = document.getElementById("pilotDetails");
+        if (document.getElementById("is_pilot").checked) {
+            pilotDetails.style.display = "block";
+        } else {
+            pilotDetails.style.display = "none";
         }
     }
     document.getElementById("is_pilot").addEventListener("change", togglePilot);
@@ -41,11 +13,13 @@
 
     // This function is used to add a new medical condition input field
     function addMedicalCondition() {
-        var container = document.getElementById("medicalConditions");
+        var container = document.getElementById("medical_conditions");
         var div = document.createElement("div");
+        div.setAttribute("class", "medical_condition");
         div.innerHTML = `
-        <label for="medical_condition" name="medical_condition_label">Medical Condition:</label>
-        <input type="text" name="medical_condition" required>
+            <label for="medical_condition" name="medical_condition_label">Medical Condition:</label>
+            <input type="text" name="medical_condition" required>
+            <button type="button" onclick="removeParentDiv(this)">Remove</button>
         `;
         container.appendChild(div);
     }
@@ -54,12 +28,20 @@
     function addCertification() {
         var container = document.getElementById("certifications");
         var div = document.createElement("div");
+        div.setAttribute("class", "certification");
         div.innerHTML = `
             <label for="certification_type" name="certification_label">Certification Type:</label>
             <input type="text" name="certification_type" required>
             <label for="date_of_issue" name="date_of_issue_label">Date of Issue:</label>
             <input type="date" name="certification_date_of_issue" required>
+            <button type="button" onclick="removeParentDiv(this)">Remove</button>
         `;
         container.appendChild(div);
     }
+
+    // This function is used to remove the parent div of the button that was clicked
+    function removeParentDiv(button) {
+        button.parentNode.remove();
+    }
+
 </script>

@@ -27,27 +27,32 @@
         <label for="is_pilot">Is Pilot</label>
         <input type="checkbox" id="is_pilot" name="is_pilot"><br>
 
-        <label for="eyesight">Eyesight</label>
-        <select name="eyesight" id="eyesight" required>
-            <option value="20/20">20/20</option>
-            <option value="20/40">20/40</option>
-            <option value="20/60">20/60</option>
-            <option value="20/80">20/80</option>
-            <option value="20/100">20/100</option>
-            <option value="20/200">20/200</option>
-            <option value="20/400">20/400</option>
-            <option value="20/800">20/800</option>
-            <option value="20/1000">20/1000</option>
-        </select><br>
+        <div id="pilotDetails">
+            <label for="eyesight">Eyesight</label>
+            <select name="eyesight" id="eyesight" required>
+                <option value="20/20">20/20</option>
+                <option value="20/40">20/40</option>
+                <option value="20/60">20/60</option>
+                <option value="20/80">20/80</option>
+                <option value="20/100">20/100</option>
+                <option value="20/200">20/200</option>
+                <option value="20/400">20/400</option>
+                <option value="20/800">20/800</option>
+                <option value="20/1000">20/1000</option>
+            </select><br>
 
-        <label for="flight_hours">Flight Hours</label>
-        <input type="number" id="flight_hours" name="flight_hours" required><br>
+            <label for="flight_hours">Flight Hours</label>
+            <input type="number" id="flight_hours" name="flight_hours" required><br>
 
-        <button type="button" id="add_medical_condition" onclick="addMedicalCondition()">Add Medical Condition</button>
-        <div id="medicalConditions"></div><br>
+            <div id="medical_conditions">
+                <button type="button" id="add_medical_condition" onclick="addMedicalCondition()">Add Medical Condition</button>
+            </div><br>
 
-        <button type="button" id="add_certification" onclick="addCertification()">Add Certification</button>
-        <div id="certifications"></div><br>
+            <div id="certifications">
+                <button type="button" id="add_certification" onclick="addCertification()">Add Certification</button>
+            </div><br>
+
+        </div>
 
         <input type="submit" value="Submit">
 

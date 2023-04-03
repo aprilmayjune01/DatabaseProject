@@ -115,7 +115,7 @@ def get_pilot(personal_ID):
 
     context['medical_conditions'] = medical_conditions
     context['certification_types'] = certification_types
-    context['dates_of_issue'] = dates_of_issue
+    context['certification_dates_of_issue'] = dates_of_issue
 
     return context
 
@@ -163,6 +163,7 @@ def view(personal_ID):
     if context['is_pilot']:   # Append pilot information if the staff member is a pilot
         pilot_context = get_pilot(personal_ID)
         context.update(pilot_context)
+
     return render_template("view_staff.html", **context)
 
 @bp.route("/edit/<int:personal_ID>", methods=['GET', 'POST'])
@@ -171,10 +172,17 @@ def edit(personal_ID):
     if context is None: # If the staff member does not exist
         return redirect(url_for('staff_directory.index'))
     
+    if context['is_pilot']:   # Append pilot information if the staff member is a pilot
+        pilot_context = get_pilot(personal_ID)
+        context.update(pilot_context)
+    
     if request.method == 'GET':
         return render_template("edit_staff.html", **context)
     
     if request.method == 'POST':
+        error_message = 'Error: Failed to edit staff member - make sure to enter all fields correctly'    # Default error message
+        error_render_template = 'edit_staff.html'    # Default error render template
+
         first_name = request.form['first_name']
         last_name = request.form['last_name']
         phone_no = request.form['phone_no']
@@ -182,6 +190,15 @@ def edit(personal_ID):
         home_address = request.form['home_address']
         employee_code = request.form['employee_code']
         salary = request.form['salary']
+        if context['is_pilot']:
+            is_pilot = True
+            eyesight = request.form['eyesight']
+            flight_hours = request.form['flight_hours']
+            medical_conditions = request.form.getlist('medical_condition')
+            certification_types = request.form.getlist('certification_type')
+            certification_dates_of_issue = request.form.getlist('certification_date_of_issue')
+        else: 
+            is_pilot = False
 
         update_people_query = f"""
         UPDATE people
@@ -194,16 +211,53 @@ def edit(personal_ID):
         SET employee_code = '{employee_code}', salary = {salary}
         WHERE personal_ID = {personal_ID}
         """
+        
+        # All queries will be executed on the fly, to accommodate for sequential database insertions.
+        execute_query(update_people_query, error_render_template, error_message)
+        execute_query(update_staff_query, error_render_template, error_message)
 
-        try:
-            g.conn.execute(text(update_people_query))
-            g.conn.execute(text(update_staff_query))
-            g.conn.commit()
-        except Exception as e:
-            print(e)
-            context['error'] = "Error: Invalid input. Make sure to enter all fields correctly."
-            return render_template("edit_staff.html", **context)
+        if is_pilot: 
+            update_pilot_query = f"""
+            UPDATE pilot
+            SET eyesight = '{eyesight}', flight_hours = {flight_hours}
+            WHERE personal_ID = {personal_ID}
+            """
 
+            execute_query(update_pilot_query, error_render_template, error_message)
+
+            # Delete all pilot's medical conditions
+            delete_pilot_medical_conditions_query = f"""
+            DELETE FROM pilot_medical_conditions
+            WHERE pilot_ID = {personal_ID}
+            """
+
+            execute_query(delete_pilot_medical_conditions_query, error_render_template, error_message)
+
+            # Delete all pilot's certifications
+            delete_certifications_query = f"""
+            DELETE FROM certification
+            WHERE pilot_ID = {personal_ID}
+            """
+
+            execute_query(delete_certifications_query, error_render_template, error_message)
+
+            # Insert all pilot's medical conditions
+            for medical_condition in medical_conditions:
+                insert_pilot_medical_conditions_query = f"""
+                INSERT INTO pilot_medical_conditions (pilot_ID, medical_condition)
+                VALUES ({personal_ID}, '{medical_condition}')
+                """
+
+                execute_query(insert_pilot_medical_conditions_query, error_render_template, error_message)
+
+            # Insert all pilot's certifications
+            for i in range(len(certification_types)):
+                insert_certifications_query = f"""
+                INSERT INTO certification (pilot_ID, certification_type, date_of_issue)
+                VALUES ({personal_ID}, '{certification_types[i]}', '{certification_dates_of_issue[i]}')
+                """
+
+                execute_query(insert_certifications_query, error_render_template, error_message)
 
         return redirect(url_for('staff_directory.view', personal_ID=personal_ID))
 
@@ -232,7 +286,7 @@ def create():
         home_address = request.form['home_address'] 
         employee_code = request.form['employee_code'] 
         salary = request.form['salary'] 
-        if "is_pilot" in request.form:
+        if request.form['is_pilot']:
             is_pilot = True
             eyesight = request.form['eyesight']
             flight_hours = request.form['flight_hours']
@@ -304,6 +358,7 @@ def create():
 
 
 #################### DEBUGGING FUNCTIONS ####################
+@bp.route("/test")
 def test_query():
     """
     Test function for development and debugging purposes. 
@@ -313,14 +368,14 @@ def test_query():
 
     select_query = """
     SELECT *
-    FROM people
-    LEFT JOIN aircraft_staff ON people.personal_ID = aircraft_staff.personal_ID
-    LEFT JOIN pilot ON people.personal_ID = pilot.personal_ID
-    WHERE people.personal_ID = 31
+    FROM certification
     """
 
     cursor = g.conn.execute(text(select_query))
-    print('Results:')
+    output = "Results: <br>"
     for result in cursor:
-        print(result)
+        output += str(result)
+        output += "<br>"
     cursor.close()
+
+    return output
