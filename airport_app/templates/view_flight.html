@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Flight Information</h3>
+
+<p>
+    <h4>{{ port_of_origin }} to {{ destination }}</h4>
+
+    Departure Time: {{ departure_time }}<br>
+    Destination: {{ destination }}<br>
+    Port of Origin: {{ port_of_origin }}<br>
+    Flight Length: {{ flight_length }}<br>
+    Domestic: {{ "Yes" if domestic else "No" }}<br>
+    Airline: {{ airline_name }}<br>
+
+</p>
+
+<p>
+    <a href="{{ url_for('flight_directory.edit', flight_ID=flight_ID) }}">Edit</a>
+    <a href="{{ url_for('flight_directory.delete', flight_ID=flight_ID) }}">Delete</a>
+</p>
+
+<p>
+    <a href="{{ url_for('flight_directory.index') }}">Back to Flight Directory</a>
+</p>
+{% endblock content %}
