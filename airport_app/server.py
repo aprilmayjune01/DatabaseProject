@@ -14,14 +14,18 @@ from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response, url_for
 # Import other files from this project
-import staff_directory, passenger_directory, aircraft_directory, flight_directory
+
+import staff_directory, passenger_directory, aircraft_directory, flight_directory, airline_directory
+
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 app.register_blueprint(staff_directory.bp)
 app.register_blueprint(passenger_directory.bp)
 app.register_blueprint(aircraft_directory.bp)
+app.register_blueprint(airline_directory.bp)
 app.register_blueprint(flight_directory.bp)
+
 
 
 

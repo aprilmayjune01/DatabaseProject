@@ -1,8 +1,8 @@
 <nav>
     <!-- This is a list of tuples, where the first element is the name of the view function and the second is the text to display. -->
     <!-- List of menu items to direct to. -->
-
-    {% set menu_items = [("staff_directory.index", "Staff Directory"), ("passenger_directory.index", "Passenger Directory"), ("aircraft_directory.index", "Aircraft Directory"), ("flight_directory.index", "Flight Directory")] %}
+    
+    {% set menu_items = [("staff_directory.index", "Staff Directory"), ("passenger_directory.index", "Passenger Directory"), ("aircraft_directory.index", "Aircraft Directory"), ("flight_directory.index", "Flight Directory"), ("airline_directory.index", "Airline Directory")] %}
     
     {% for menu_item in  menu_items%}
         <a href="{{ url_for(menu_item[0]) }}">{{ menu_item[1] }}</a>

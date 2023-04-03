@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>Airline Directory</h3>
+<p>This is a list of all airlines registered with this airport.</p>
+
+{% for i in range(num_airlines) %}
+<div>
+    <h4><a href="{{url_for('airline_directory.view', airline_ID=airline_IDs[i])}}">{{ airline_names[i] }}</a></h4>
+</div>
+{% endfor %}
+<p>
+    <h3><a href="{{ url_for('airline_directory.create') }}">Create New</a></h3>
+</p>
+{% endblock content %}
