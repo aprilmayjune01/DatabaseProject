@@ -11,23 +11,20 @@ def index():
     """
 
     select_query = """
-    SELECT * 
+    SELECT A.airline_ID, A.airline_name
     FROM airline A
     """
 
-    airline_ids = list()
-    locations_based_ins = list()
-    phone_nos = list()
-    emails = list()
+    airline_IDs = list()
+    airline_names = list()
     context = dict()
 
     try:
         cursor = g.conn.execute(text(select_query))
         for result in cursor:
-            airline_ids.append(result[0])
-            locations_based_ins.append(result[1])
-            phone_nos.append(result[2])
-            emails.append(result[3])
+            airline_IDs.append(result[0])
+            airline_names.append(result[1])
+            
         cursor.close()
 
     except Exception as e:
@@ -36,11 +33,14 @@ def index():
         print(e)
 
     context = {
-            "airline_ids": airline_ids,
-            "locations_based_ins": locations_based_ins,
-            "phone_nos": phone_nos,
-            "emails": emails,
-            "num_airlines": len(airline_ids)
+            "airline_IDs": airline_IDs,
+            "airline_names": airline_names,
+            "num_airlines": len(airline_IDs)
         }
 
     return render_template("airline_directory.html", **context)
+
+@bp.route("/view/<airline_ID>")
+def view(airline_ID):
+    return redirect (url_for ('airline_directory.index'))
+

@@ -6,11 +6,9 @@
 
 {% for i in range(num_airlines) %}
 <div>
-    <h4>{{ airline_ids[i] }} - {{ airline_names[i] }}</h4>
+    <h4><a href="{{url_for('airline_directory.view', airline_ID=airline_IDs[i])}}">{{ airline_names[i] }}</a></h4>
 
-    <p>Locations based in: {{ locations_based_ins[i] }}</p>
-    <p>Phone: {{ phone_nos[i] }}</p>
-    <p>Email: {{ emails[i] }}</p>
+
 </div>
 {% endfor %}
 {% endblock content %}
