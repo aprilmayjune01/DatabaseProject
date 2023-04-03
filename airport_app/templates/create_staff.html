@@ -3,12 +3,6 @@
 {% block content %}
     <h1>Create Staff</h1>
 
-    {% if error is defined %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
-
-    
-
     <form method="POST" action="{{ url_for('staff_directory.create') }}">
         <h4>Personal Details</h4>
         <label for="first_name">First Name</label><br>

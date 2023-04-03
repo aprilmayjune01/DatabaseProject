@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <style>
+        .bottom-three {
+        margin-bottom: 3cm;
+        }
+    </style>
+
+    <p>
+        <h3>{{ vessel_ID }} {{ model }}</h3>
+        Fuel capacity: {{ fuel_capacity }} liters<br>
+        Domestic: {% if domestic == 1 %} Yes {% else %} No {% endif %} <br>
+        Aircraft type: {{ aircraft_type }} <br>
+
+        {% if aircraft_type == 'cargo' %}
+            Weight limit: {{ weight_limit }} kilograms <br>
+
+        {% elif aircraft_type == 'passenger' %}
+            Passenger capacity: {{ passenger_capacity }} <br>
+            
+            {% if is_private == 1 %}
+                Private Airplane <br>
+            {% else %}
+                Commercial Airplane <br>
+            {% endif %}
+
+        {% endif %}
+    </p>
+
+    <p>
+        <a href="{{ url_for('aircraft_directory.edit', vessel_ID=vessel_ID) }}">Edit</a>
+        <a href="{{ url_for('aircraft_directory.delete', vessel_ID=vessel_ID) }}">Delete</a>
+        <br>
+        <a href="{{ url_for('aircraft_directory.index') }}">Back to aircraft directory</a>
+    </p>
+
+{% endblock %}

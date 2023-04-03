@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Create Aircraft</h1>
+    On this page, you can register a new aircraft vessel with the airport.
+
+    <form method="POST" action="{{ url_for('aircraft_directory.create') }}">
+        <h4>Aircraft Details</h4>
+        <label for="model">Model</label><br>
+        <input type="text" id="model" name="model" required><br>
+        <label for="fuel_capacity">Fuel Capacity (liters)</label><br>
+        <input type="number" id="fuel_capacity" name="fuel_capacity" required><br>
+        <label for="domestic">Domestic</label><br>
+        <input type="checkbox" id="domestic" name="domestic" value="1"><br>
+        <label for="aircraft_type">Aircraft Type</label><br>
+        <select id="aircraft_type" name="aircraft_type" required>
+            <option value="cargo">Cargo</option>
+            <option value="passenger">Passenger</option>
+        </select><br>
+        <label for="weight_limit">Weight Limit</label><br>
+        <input type="number" id="weight_limit" name="weight_limit" required><br>
+        <label for="passenger_capacity">Passenger Capacity</label><br>
+        <input type="number" id="passenger_capacity" name="passenger_capacity" required><br>
+        <label for="is_private">Private</label><br>
+        <input type="checkbox" id="is_private" name="is_private" value="1"><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    {% include "_aircraft_script.html" %}
+
+
+{% endblock %}

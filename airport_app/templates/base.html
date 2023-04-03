@@ -11,6 +11,10 @@
         </header>
         <h1>International Reading-Stockholm Airport</h1>
 
+        {% if error is defined %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+
         {% block content %}
         {% endblock content %}
     </body>

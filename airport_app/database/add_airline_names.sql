@@ -62,5 +62,4 @@ SET airline_name = 'Alitalia'
 WHERE airline_id = 15;
 
 ALTER TABLE airline 
-ALTER COLUMN airline_name 
-SET NOT NULL;
+ALTER COLUMN airline_name SET NOT NULL;
