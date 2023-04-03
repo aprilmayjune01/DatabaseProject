@@ -13,6 +13,7 @@ def execute_query(query, template, error_message):
         g.conn.execute(text(query))
         g.conn.commit()
     except Exception as e:
+        print(e)
         return render_template(template, error=error_message)
 
 def get_staff(personal_ID):
@@ -190,7 +191,7 @@ def edit(personal_ID):
         home_address = request.form['home_address']
         employee_code = request.form['employee_code']
         salary = request.form['salary']
-        if context['is_pilot']:
+        if 'is_pilot' in request.form and request.form['is_pilot'] == 'on':
             is_pilot = True
             eyesight = request.form['eyesight']
             flight_hours = request.form['flight_hours']
@@ -217,13 +218,19 @@ def edit(personal_ID):
         execute_query(update_staff_query, error_render_template, error_message)
 
         if is_pilot: 
-            update_pilot_query = f"""
-            UPDATE pilot
-            SET eyesight = '{eyesight}', flight_hours = {flight_hours}
-            WHERE personal_ID = {personal_ID}
+            delete_pilot_query = f"""
+            DELETE FROM pilot
+            WHERE pilot_ID = {personal_ID}
             """
 
-            execute_query(update_pilot_query, error_render_template, error_message)
+            execute_query(delete_pilot_query, error_render_template, error_message)
+
+            insert_pilot_query = f""" 
+            INSERT INTO pilot (pilot_ID, eyesight, flight_hours)
+            VALUES ({personal_ID}, {eyesight}, {flight_hours})
+            """
+
+            execute_query(insert_pilot_query, error_render_template, error_message) 
 
             # Delete all pilot's medical conditions
             delete_pilot_medical_conditions_query = f"""
@@ -259,6 +266,16 @@ def edit(personal_ID):
 
                 execute_query(insert_certifications_query, error_render_template, error_message)
 
+        else:
+            # Delete from pilot table if the staff member is no longer a pilot
+            delete_pilot_query = f"""
+            DELETE FROM pilot
+            WHERE personal_ID = {personal_ID}
+            """
+
+            execute_query(delete_pilot_query, error_render_template, error_message)
+
+
         return redirect(url_for('staff_directory.view', personal_ID=personal_ID))
 
 @bp.route("/delete/<int:personal_ID>")
@@ -286,7 +303,7 @@ def create():
         home_address = request.form['home_address'] 
         employee_code = request.form['employee_code'] 
         salary = request.form['salary'] 
-        if request.form['is_pilot']:
+        if 'is_pilot' in request.form:
             is_pilot = True
             eyesight = request.form['eyesight']
             flight_hours = request.form['flight_hours']
@@ -368,7 +385,7 @@ def test_query():
 
     select_query = """
     SELECT *
-    FROM certification
+    FROM owns_aircraft
     """
 
     cursor = g.conn.execute(text(select_query))
