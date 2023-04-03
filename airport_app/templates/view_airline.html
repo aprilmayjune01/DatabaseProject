@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .bottom-three {
+       margin-bottom: 3cm;
+    }
+</style>
+
+<p>
+    <h4>{{airline_name[i]}}</h4>
+
+    Airline ID: {{ airline_id[i]}}<br>
+    Locations based in: {{ locations_based_in[i]}}<br>
+    Phone: {{ phone_no [i]}}<br>
+    Email: {{ email[i] }}<br>
+
+</p>
+
+<p>
+    <a href="{{ url_for('airline_directory.edit', personal_ID=personal_ID) }}">Edit</a>
+    <a href="{{ url_for('airline_directory.delete', personal_ID=personal_ID) }}">Delete</a>
+    <br>
+    <a href="{{ url_for('airline_directory.index') }}">Back to airline directory</a>
+</p>
+{% endblock content %}
