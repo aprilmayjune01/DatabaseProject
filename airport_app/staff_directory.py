@@ -13,6 +13,7 @@ def execute_query(query, template, error_message):
         g.conn.execute(text(query))
         g.conn.commit()
     except Exception as e:
+        print(e)
         return render_template(template, error=error_message)
 
 def get_staff(personal_ID):
@@ -368,7 +369,7 @@ def test_query():
 
     select_query = """
     SELECT *
-    FROM certification
+    FROM flight
     """
 
     cursor = g.conn.execute(text(select_query))

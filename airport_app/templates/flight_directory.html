@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h3>Flight Directory</h3>
+  This is a list of all flights registered with this airport.
+
+  {% if flight_IDs|length == 0 %}
+    <p>No flights found.</p>
+  {% else %}
+    {% for i in range(flight_IDs|length) %}
+      <div>
+        <h4><a href="{{ url_for('flight_directory.view', flight_ID=flight_IDs[i]) }}">{{ ports_of_origin[i] }} - {{ destinations[i] }}</a></h4>
+        Departure time: {{ departure_times[i] }}<br>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
