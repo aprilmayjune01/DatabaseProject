@@ -1,0 +1,47 @@
+<script>
+    // This script is used to toggle the pilot-specific fields when the "Is Pilot" checkbox is checked/unchecked
+    function togglePilot() {
+        var pilotDetails = document.getElementById("pilotDetails");
+        if (document.getElementById("is_pilot").checked) {
+            pilotDetails.style.display = "block";
+        } else {
+            pilotDetails.style.display = "none";
+        }
+    }
+    document.getElementById("is_pilot").addEventListener("change", togglePilot);
+    togglePilot(); // Run on page load
+
+    // This function is used to add a new medical condition input field
+    function addMedicalCondition() {
+        var container = document.getElementById("medical_conditions");
+        var div = document.createElement("div");
+        div.setAttribute("class", "medical_condition");
+        div.innerHTML = `
+            <label for="medical_condition" name="medical_condition_label">Medical Condition:</label>
+            <input type="text" name="medical_condition" required>
+            <button type="button" onclick="removeParentDiv(this)">Remove</button>
+        `;
+        container.appendChild(div);
+    }
+    
+    // This function is used to add a new certification input field
+    function addCertification() {
+        var container = document.getElementById("certifications");
+        var div = document.createElement("div");
+        div.setAttribute("class", "certification");
+        div.innerHTML = `
+            <label for="certification_type" name="certification_label">Certification Type:</label>
+            <input type="text" name="certification_type" required>
+            <label for="date_of_issue" name="date_of_issue_label">Date of Issue:</label>
+            <input type="date" name="certification_date_of_issue" required>
+            <button type="button" onclick="removeParentDiv(this)">Remove</button>
+        `;
+        container.appendChild(div);
+    }
+
+    // This function is used to remove the parent div of the button that was clicked
+    function removeParentDiv(button) {
+        button.parentNode.remove();
+    }
+
+</script>

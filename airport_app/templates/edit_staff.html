@@ -23,8 +23,55 @@
         <label for="salary">Salary</label><br>
         <input type="number" id="salary" name="salary" value="{{ salary }}" required><br>
 
-        <!-- IMPLEMENT PILOT FORMS -->
+        <h4>Pilot-specific Details</h4>
+        <label for="is_pilot">Is Pilot</label>
+        <input type="checkbox" id="is_pilot" name="is_pilot" {% if is_pilot %}checked{% endif %}><br>
+
+        <div id="pilotDetails">
+            <label for="eyesight">Eyesight</label>
+            <select name="eyesight" id="eyesight" required>
+                <option value="20/20" {% if eyesight == "20/20" %}selected{% endif %}>20/20</option>
+                <option value="20/40" {% if eyesight == "20/40" %}selected{% endif %}>20/40</option>
+                <option value="20/60" {% if eyesight == "20/60" %}selected{% endif %}>20/60</option>
+                <option value="20/80" {% if eyesight == "20/80" %}selected{% endif %}>20/80</option>
+                <option value="20/100" {% if eyesight == "20/100" %}selected{% endif %}>20/100</option>
+                <option value="20/200" {% if eyesight == "20/200" %}selected{% endif %}>20/200</option>
+                <option value="20/400" {% if eyesight == "20/400" %}selected{% endif %}>20/400</option>
+                <option value="20/800" {% if eyesight == "20/800" %}selected{% endif %}>20/800</option>
+                <option value="20/1000" {% if eyesight == "20/1000" %}selected{% endif %}>20/1000</option>
+            </select><br>
+
+            <label for="flight_hours">Flight Hours</label><br>
+            <input type="number" id="flight_hours" name="flight_hours" value="{{ flight_hours }}" required><br>
+
+            <div id="medical_conditions">
+                <button type="button" id="add_medical_condition" onclick="addMedicalCondition()">Add Medical Condition</button>
+                {% for medical_condition in medical_conditions %}
+                    <div class="medical_condition">
+                        <label for="medical_condition">Medical Condition</label>
+                        <input type="text" name="medical_condition" value="{{ medical_condition }}" required>
+                        <button type="button" onclick="removeParentDiv(this)">Remove</button>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div id="certifications">
+                <button type="button" id="add_certification" onclick="addCertification()">Add Certification</button>
+                {% for i in range(certification_types|length) %}
+                    <div class="certification">
+                        <label for="certification_type">Certification</label>
+                        <input type="text" name="certification_type" value="{{ certification_types[i] }}" required>
+                        <label for="certification_date_of_issue">Date of issue</label>
+                        <input type="date" name="certification_date_of_issue" value="{{ certification_dates_of_issue[i] }}" required>
+                        <button type="button" onclick="removeParentDiv(this)">Remove</button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
 
         <input type="submit" value="Submit">
     </form>
+
+    {% include "_pilot_script.html" %}
+
 {% endblock %}
