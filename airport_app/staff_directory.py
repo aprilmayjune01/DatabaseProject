@@ -5,6 +5,16 @@ bp = Blueprint('staff_directory', __name__, template_folder='templates', url_pre
 
 ### Helper functions ###
 
+def execute_query(query, template, error_message):
+    """
+    Attempts to execute a query. If unsuccessful, renders an error page.
+    """
+    try:
+        g.conn.execute(text(query))
+        g.conn.commit()
+    except Exception as e:
+        return render_template(template, error=error_message)
+
 def get_staff(personal_ID):
     """
     Returns a dictionary containing the staff member's information.
@@ -199,13 +209,7 @@ def delete(personal_ID):
     WHERE personal_ID = {personal_ID}
     """
 
-    try:
-        g.conn.execute(text(delete_query))
-        g.conn.commit()
-    except Exception as e:
-        print(e)
-        return redirect(url_for('staff_directory.index', error="Error: Could not delete staff member."))
-
+    execute_query(delete_query, 'staff_directory.index', 'Error: Could not delete staff member.')
     return redirect(url_for('staff_directory.index'))
 
 @bp.route("/create", methods=['GET', 'POST'])
@@ -214,6 +218,8 @@ def create():
         return render_template("create_staff.html")
     
     if request.method == 'POST':
+        error_message = 'Error: Failed to create staff member - make sure to enter all fields correctly'    # Default error message
+
         first_name = request.form['first_name']
         last_name = request.form['last_name']
         phone_no = request.form['phone_no']
@@ -257,44 +263,36 @@ def create():
         VALUES ({personal_ID}, '{employee_code}', {salary})
         """
 
+        # All queries will be executed on the fly, to accommodate for sequential database insertions.
+        execute_query(insert_people_query, 'create_staff.html', error_message)
+        execute_query(insert_aircraft_staff_query, 'create_staff.html', error_message)
+
         if is_pilot:
             insert_pilot_query = f"""
             INSERT INTO pilot (personal_ID, eyesight, flight_hours)
             VALUES ({personal_ID}, '{eyesight}', {flight_hours})
             """
 
-            g.conn.execute(text(insert_pilot_query))
+            execute_query(insert_pilot_query, 'create_staff.html', error_message)
 
             for i in range(len(medical_conditions)):
                 insert_medical_condition_query = f"""
                 INSERT INTO pilot_medical_conditions (pilot_ID, medical_condition)
                 VALUES ({personal_ID}, '{medical_conditions[i]}')
                 """
-                try:    # Query must be executed on the fly because the number of medical conditions is variable
-                    g.conn.execute(text(insert_medical_condition_query))
-                except Exception as e:
-                    print(e)
-                    return render_template("create_staff.html", error="Failed to create staff member - make sure to enter all fields correctly")
+                
+                # Query must be executed on the fly because the number of medical conditions is variable
+                execute_query(insert_medical_condition_query, 'create_staff.html', error_message)
+                
             
             for i in range(len(certification_types)):
                 insert_certification_query = f"""
                 INSERT INTO certification (pilot_ID, certification_type, date_of_issue)
                 VALUES ({personal_ID}, '{certification_types[i]}', '{dates_of_issue[i]}')
                 """
-                try:    # Query must be executed on the fly because the number of certifications is variable
-                    g.conn.execute(text(insert_certification_query))
-                except Exception as e:
-                    print(e)
-                    return render_template("create_staff.html", error="Failed to create staff member - make sure to enter all fields correctly")
-                
 
-        try:
-            g.conn.execute(text(insert_people_query))
-            g.conn.execute(text(insert_aircraft_staff_query))
-            g.conn.commit()
-        except Exception as exception:
-            print(exception)
-            return render_template("create_staff.html", error="Failed to create staff member - make sure to enter all fields correctly")
+                # Query must be executed on the fly because the number of certifications is variable
+                execute_query(insert_certification_query, 'create_staff.html', error_message)    
 
         return redirect(url_for('staff_directory.view', personal_ID=personal_ID))
     
