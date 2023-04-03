@@ -6,8 +6,6 @@
     <form method="POST" action="{{ url_for('flight_directory.create') }}">
         <h4>Flight Details</h4>
 
-        <label for="flight_ID">Flight ID</label><br>
-        <input type="text" id="flight_ID" name="flight_ID" required><br>
         <label for="destination">Destination</label><br>
         <input type="text" id="destination" name="destination" required><br>
         <label for="port_of_origin">Port of Origin</label><br>
@@ -17,13 +15,13 @@
         <label for="flight_length">Flight Length</label><br>
         <input type="number" id="flight_length" name="flight_length" required><br>
         <label for="domestic">Domestic</label><br>
-        <select id="domestic" name="domestic" required>
-            <option value="True">Yes</option>
-            <option value="False">No</option>
+        <input type="checkbox" id="domestic" name="domestic"><br>
+        <label for="airline_ID">Airline</label><br>
+        <select id="airline_ID" name="airline_ID" required>
+            {% for i in range(airline_IDs|length) %}
+                <option value="{{ airline_IDs[i] }}">{{ airline_names[i] }}</option>
+            {% endfor %}
         </select><br>
-        <label for="airline_id">Airline ID</label><br>
-        <input type="text" id="airline_id" name="airline_id" required><br>
-        <br>
         
         <input type="submit" value="Submit">
     </form>

@@ -50,6 +50,87 @@ def get_flight(flight_ID):
     
     return context
 
+def get_airlines():
+    """
+    Returns a dictionary containing all airlines.
+    """
+    select_query = """
+    SELECT airline_ID, airline_name
+    FROM airline
+    """
+
+    airline_IDs = list()
+    airline_names = list()
+
+    try:
+        cursor = g.conn.execute(text(select_query))
+        for result in cursor:
+            airline_IDs.append(result[0])
+            airline_names.append(result[1])
+        cursor.close()
+    except Exception as e:
+        print(e)
+        return None
+    
+    context = {
+        "airline_IDs": airline_IDs,
+        "airline_names": airline_names,
+    }
+
+    return context
+
+def get_airline(airline_ID):
+    """
+    Returns a dictionary containing the airline's information.
+    """
+
+    select_query = f"""
+    SELECT airline_ID, airline_name
+    FROM airline
+    WHERE airline_ID = '{airline_ID}'
+    """
+
+    context = dict()
+
+    try: 
+        cursor = g.conn.execute(text(select_query))
+        result = cursor.fetchone()
+        cursor.close()
+
+        context = {
+            "airline_ID": result[0],
+            "airline_name": result[1]
+        }
+
+    except Exception as e:
+        print(e)
+        return None
+    
+    return context
+
+def get_max_flight_ID():
+    """
+    Returns the maximum flight_ID in the database.
+    """
+    select_query = """
+    SELECT flight_ID
+    FROM flight
+    """
+
+    max_flight_ID = 0
+
+    try:
+        cursor = g.conn.execute(text(select_query))
+        for result in cursor:
+            if int(result[0]) > max_flight_ID:
+                max_flight_ID = int(result[0])
+        cursor.close()
+    except Exception as e:
+        print(e)
+        return None
+    
+    return max_flight_ID
+
 
 ### Routes ###
 
@@ -93,8 +174,14 @@ def view(flight_ID):
     Displays a single flight.
     """
     context = get_flight(flight_ID)
-    if context is None:
+    if context is None or len(context) == 0:
         return redirect(url_for("flight_directory.index"))
+    
+    airline = get_airline(context["airline_ID"])
+    if airline is None or len(airline) == 0:
+        return redirect(url_for("flight_directory.index", error="Unable to view flight. Please try again."))
+    
+    context.update(airline)
     
     return render_template("view_flight.html", **context)
 
@@ -103,9 +190,19 @@ def edit(flight_ID):
     """
     Allows the user to edit a flight.
     """
+    error_message = "Unable to edit flight. Make sure all fields are filled out correctly."
+    error_template = "edit_flight.html"
+
     context = get_flight(flight_ID)
-    if context is None:
+    if context is None or len(context) == 0:
         return redirect(url_for("flight_directory.index"))
+    
+    airline_data = get_airlines()
+    if airline_data is None or len(airline_data["airline_IDs"]) == 0:
+        return render_template(error_template, error="Unable to edit flight. Please try again.")
+    else: 
+        context.update(airline_data)
+    
 
     if request.method == "GET":
         return render_template("edit_flight.html", **context)
@@ -116,7 +213,10 @@ def edit(flight_ID):
         destination = request.form['destination']
         departure_time = request.form['departure_time']
         flight_length = request.form['flight_length']
-        domestic = request.form['domestic']
+        if 'domestic' in request.form:
+            domestic = True
+        else:
+            domestic = False
         airline_ID = request.form['airline_ID']
 
         # Update the flight
@@ -128,11 +228,75 @@ def edit(flight_ID):
             flight_length = {flight_length},
             domestic = {domestic},
             airline_ID = {airline_ID}
-        WHERE flight_ID = {flight_ID}
+        WHERE flight_ID = '{flight_ID}'
         """
 
         execute_query(update_query, "edit_flight.html", "Unable to edit flight. Make sure all fields are filled out correctly.")
 
+        return redirect(url_for("flight_directory.view", flight_ID=flight_ID))
+
+@bp.route("/delete/<flight_ID>")
+def delete(flight_ID):
+    """
+    Allows the user to delete a flight.
+    """
+    context = get_flight(flight_ID)
+    if context is None:
         return redirect(url_for("flight_directory.index"))
 
-    
+    delete_query = f"""
+    DELETE FROM flight
+    WHERE flight_ID = '{flight_ID}'
+    """
+
+    execute_query(delete_query, "view_flight.html", "Unable to delete flight.")
+
+    return redirect(url_for("flight_directory.index"))
+
+@bp.route("/create", methods=["GET", "POST"])
+def create():
+    """
+    Allows the user to create a flight.
+    """
+    # Default error data
+    error_message = "Unable to create flight. Make sure all fields are filled out correctly."
+    error_template = "create_flight.html"
+
+    # Get airline data
+    airline_data = get_airlines()
+    if airline_data is None or len(airline_data["airline_IDs"]) == 0:
+        return render_template(error_template, error="Unable to create flight. Please try again.")
+    else: 
+        context = airline_data
+
+    if request.method == "GET":
+        return render_template("create_flight.html", **context)
+
+    if request.method == "POST":
+        port_of_origin = request.form['port_of_origin']
+        destination = request.form['destination']
+        departure_time = request.form['departure_time']
+        flight_length = request.form['flight_length']
+        if 'domestic' in request.form:
+            domestic = True
+        else:
+            domestic = False
+        airline_ID = request.form['airline_ID']
+
+        # Get the next flight_ID
+        max_flight_ID = get_max_flight_ID()
+        if max_flight_ID is None:
+            return render_template(error_template, error="Unable to create flight. Please try again.")
+        else: 
+            flight_ID = str(max_flight_ID + 1)
+
+
+        # Insert the flight
+        insert_query = f"""
+        INSERT INTO flight (flight_ID, port_of_origin, destination, departure_time, flight_length, domestic, airline_ID)
+        VALUES ({flight_ID}, '{port_of_origin}', '{destination}', '{departure_time}', {flight_length}, {domestic}, {airline_ID})
+        """
+
+        execute_query(insert_query, error_template, error_message)
+
+        return redirect(url_for("flight_directory.view", flight_ID=flight_ID))

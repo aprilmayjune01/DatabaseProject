@@ -11,8 +11,13 @@
     Port of Origin: {{ port_of_origin }}<br>
     Flight Length: {{ flight_length }}<br>
     Domestic: {{ "Yes" if domestic else "No" }}<br>
-    Airline ID: {{ airline_id }}<br>
+    Airline: {{ airline_name }}<br>
 
+</p>
+
+<p>
+    <a href="{{ url_for('flight_directory.edit', flight_ID=flight_ID) }}">Edit</a>
+    <a href="{{ url_for('flight_directory.delete', flight_ID=flight_ID) }}">Delete</a>
 </p>
 
 <p>

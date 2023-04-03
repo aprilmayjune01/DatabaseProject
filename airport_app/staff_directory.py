@@ -191,7 +191,7 @@ def edit(personal_ID):
         home_address = request.form['home_address']
         employee_code = request.form['employee_code']
         salary = request.form['salary']
-        if context['is_pilot']:
+        if 'is_pilot' in request.form:
             is_pilot = True
             eyesight = request.form['eyesight']
             flight_hours = request.form['flight_hours']
@@ -287,7 +287,7 @@ def create():
         home_address = request.form['home_address'] 
         employee_code = request.form['employee_code'] 
         salary = request.form['salary'] 
-        if request.form['is_pilot']:
+        if 'is_pilot' in request.form:
             is_pilot = True
             eyesight = request.form['eyesight']
             flight_hours = request.form['flight_hours']
@@ -369,7 +369,7 @@ def test_query():
 
     select_query = """
     SELECT *
-    FROM flight
+    FROM owns_aircraft
     """
 
     cursor = g.conn.execute(text(select_query))
