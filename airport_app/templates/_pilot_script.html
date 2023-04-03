@@ -2,10 +2,13 @@
     // This script is used to toggle the pilot-specific fields when the "Is Pilot" checkbox is checked/unchecked
     function togglePilot() {
         var pilotDetails = document.getElementById("pilotDetails");
-        if (document.getElementById("is_pilot").checked) {
-            pilotDetails.style.display = "block";
-        } else {
-            pilotDetails.style.display = "none";
+        var elements = pilotDetails.getElementsByTagName("*");
+        for (var i = 0; i < elements.length; i++) {
+            if (document.getElementById("is_pilot").checked) {
+                elements[i].disabled = false;
+            } else {
+                elements[i].disabled = true;
+            }
         }
     }
     document.getElementById("is_pilot").addEventListener("change", togglePilot);
