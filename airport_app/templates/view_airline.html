@@ -8,18 +8,18 @@
 </style>
 
 <p>
-    <h4>{{airline_name[i]}}</h4>
+    <h4>{{ airline_name }}</h4>
 
-    Airline ID: {{ airline_id[i]}}<br>
-    Locations based in: {{ locations_based_in[i]}}<br>
-    Phone: {{ phone_no [i]}}<br>
-    Email: {{ email[i] }}<br>
+    Airline ID: {{ airline_id }}<br>
+    Locations based in: {{ locations_based_in }}<br>
+    Phone: {{ phone_no }}<br>
+    Email: {{ email }}<br>
 
 </p>
 
 <p>
-    <a href="{{ url_for('airline_directory.edit', personal_ID=personal_ID) }}">Edit</a>
-    <a href="{{ url_for('airline_directory.delete', personal_ID=personal_ID) }}">Delete</a>
+    <a href="{{ url_for('airline_directory.edit', airline_id=airline_id) }}">Edit</a>
+    <a href="{{ url_for('airline_directory.delete', airline_id=airline_id) }}">Delete</a>
     <br>
     <a href="{{ url_for('airline_directory.index') }}">Back to airline directory</a>
 </p>
