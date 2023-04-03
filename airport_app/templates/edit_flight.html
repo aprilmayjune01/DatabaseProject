@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Edit Flight Details</h1>
+
+    <form method="POST" action="{{ url_for('flight_directory.edit', flight_ID=flight_ID) }}">
+        <input type="hidden" name="flight_ID" value="{{ flight_ID }}">
+        
+        <label for="destination">Destination</label><br>
+        <input type="text" id="destination" name="destination" value="{{ destination }}" required><br>
+        <label for="port_of_origin">Port of Origin</label><br>
+        <input type="text" id="port_of_origin" name="port_of_origin" value="{{ port_of_origin }}" required><br>
+        <label for="departure_time">Departure Time</label><br>
+        <input type="text" id="departure_time" name="departure_time" value="{{ departure_time }}" required><br>
+        <label for="flight_length">Flight Length</label><br>
+        <input type="text" id="flight_length" name="flight_length" value="{{ flight_length }}" required><br>
+        <label for="domestic">Domestic</label><br>
+        <input type="checkbox" id="domestic" name="domestic" {% if domestic %}checked{% endif %}><br>
+        <label for="airline_id">Airline ID</label><br>
+        <input type="text" id="airline_id" name="airline_id" value="{{ airline_id }}" required><br>
+        
+        <input type="submit" value="Submit">
+    </form>
+
+{% endblock %}
