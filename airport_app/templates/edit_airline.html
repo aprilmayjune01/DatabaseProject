@@ -4,11 +4,11 @@
 {% block content %}
     <h1>Edit Airline Details</h1>
 
-    <form method="POST" action="{{ url_for('airline_directory.edit', personal_ID=personal_ID) }}">
+    <form method="POST" action="{{ url_for('airline_directory.edit', airline_ID=airline_ID) }}">
         <label for="airline_name">Airline Name</label><br>
         <input type="text" id="airline_name" name="airline_name" value="{{ airline_name }}" required><br>
         <label for="airline_id">Airline ID</label><br>
-        <input type="text" id="airline_id" name="airline_id" value="{{ airline_id }}" required><br>
+        <input type="text" id="airline_ID" name="airline_ID" value="{{ airline_ID }}" required><br>
         <label for="email">Email</label><br>
         <input type="email" id="email" name="email" value="{{ email }}" required><br>
         <label for="phone_no">Phone Number</label><br>

@@ -18,8 +18,9 @@
 </p>
 
 <p>
-    <a href="{{ url_for('airline_directory.edit', airline_id=airline_id) }}">Edit</a>
-    <a href="{{ url_for('airline_directory.delete', airline_id=airline_id) }}">Delete</a>
+    <a href="{{ url_for('airline_directory.edit', airline_ID=airline_ID) }}">Edit</a>
+    <a href="{{ url_for('airline_directory.create', airline_ID=airline_ID) }}">Create New</a>
+    <a href="{{ url_for('airline_directory.delete', airline_ID=airline_ID) }}">Delete</a>
     <br>
     <a href="{{ url_for('airline_directory.index') }}">Back to airline directory</a>
 </p>
