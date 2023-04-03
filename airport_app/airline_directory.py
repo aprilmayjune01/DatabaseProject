@@ -7,7 +7,7 @@ bp = Blueprint('airline_directory', __name__, template_folder='templates', url_p
 def index():
     """
     Main page for airline_directory.
-    Displays all staff members.
+    Displays all the airlines.
     """
 
     select_query = """
