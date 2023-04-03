@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h3>Flight Directory</h3>
+  <p>This is a list of all flights registered with this airport.</p>
+
+  {% if num_entries == 0 %}
+    <p>No flights found.</p>
+  {% else %}
+    {% for i in range(num_entries) %}
+      <div>
+        <h4>{{ flight_ID[i] }}</h4>
+        Destination: {{ destination[i] }}<br>
+        Port of origin: {{ port_of_origin[i] }}<br>
+        Departure time: {{ departure_time[i] }}<br>
+        Flight length: {{ flight_length[i] }}<br>
+        Domestic: {% if domestic[i] %}Yes{% else %}No{% endif %}<br>
+        Airline ID: {{ airline_id[i] }}<br>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
