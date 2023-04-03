@@ -1,25 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<style>
-    .bottom-three {
-       margin-bottom: 3cm;
-    }
-</style>
-
 <h3>Flight Information</h3>
 
 <p>
-    <h4>{{ flight_ID }}</h4>
+    <h4>{{ port_of_origin }} to {{ destination }}</h4>
 
+    Departure Time: {{ departure_time }}<br>
     Destination: {{ destination }}<br>
     Port of Origin: {{ port_of_origin }}<br>
-    Departure Time: {{ departure_time }}<br>
     Flight Length: {{ flight_length }}<br>
     Domestic: {{ "Yes" if domestic else "No" }}<br>
     Airline ID: {{ airline_id }}<br>
 
-    <a href="{{ url_for('flight_directory.book_flight', flight_ID=flight_ID) }}" class="btn btn-primary">Book Flight</a>
 </p>
 
 <p>

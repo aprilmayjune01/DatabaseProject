@@ -24,7 +24,7 @@ def get_flight(flight_ID):
     select_query = f"""
     SELECT flight_ID, port_of_origin, destination, departure_time, flight_length, domestic, airline_ID 
     FROM flight
-    WHERE flight_ID = {flight_ID}
+    WHERE flight_ID = '{flight_ID}'
     """
 
     context = dict()
@@ -87,7 +87,7 @@ def index():
 
     return render_template("flight_directory.html", **context)
 
-@bp.route("/view/<int:flight_ID>")
+@bp.route("/view/<flight_ID>")
 def view(flight_ID):
     """
     Displays a single flight.
@@ -98,7 +98,7 @@ def view(flight_ID):
     
     return render_template("view_flight.html", **context)
 
-@bp.route("/edit/<int:flight_ID>", methods=["GET", "POST"])
+@bp.route("/edit/<flight_ID>", methods=["GET", "POST"])
 def edit(flight_ID):
     """
     Allows the user to edit a flight.

@@ -1,2 +1,0 @@
-ALTER TABLE flight
-ALTER COLUMN flight_id TYPE INT;
