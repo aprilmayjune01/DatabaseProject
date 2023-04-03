@@ -11,13 +11,15 @@ def index():
     """
 
     select_query = """
-    SELECT * FROM airline 
+    SELECT * 
+    FROM airline A
     """
 
     airline_ids = list()
     locations_based_ins = list()
     phone_nos = list()
     emails = list()
+    context = dict()
 
     try:
         cursor = g.conn.execute(text(select_query))
@@ -28,19 +30,17 @@ def index():
             emails.append(result[3])
         cursor.close()
 
-        context = {
+    except Exception as e:
+        # log the error message or display a friendly error page to the user
+        # here is an example of displaying the error message in the template
+        print(e)
+
+    context = {
             "airline_ids": airline_ids,
             "locations_based_ins": locations_based_ins,
             "phone_nos": phone_nos,
             "emails": emails,
+            "num_airlines": len(airline_ids)
         }
 
-        return render_template("airline_directory.html", **context)
-
-    except Exception as e:
-        # log the error message or display a friendly error page to the user
-        # here is an example of displaying the error message in the template
-        context = {
-            "error_message": str(e)
-        }
-        return render_template("error.html", **context)
+    return render_template("airline_directory.html", **context)
