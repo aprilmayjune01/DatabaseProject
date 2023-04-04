@@ -382,11 +382,14 @@ def test_query():
     Used to access the database.
     """
 
+    personal_ID = 27
 
-    select_query = """
-    SELECT *
-    FROM owns_aircraft
-    """
+    select_query = f'''
+    SELECT WF.flight_ID, F.destination, f.port_of_origin
+    FROM works_flight WF
+    JOIN flight F ON WF.flight_ID = F.flight_ID
+    WHERE WF.staff_ID = {personal_ID}
+    '''
 
     cursor = g.conn.execute(text(select_query))
     output = "Results: <br>"
