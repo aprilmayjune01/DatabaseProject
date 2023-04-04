@@ -15,6 +15,13 @@
 
 </p>
 
+{% if aircraft_ID is defined %}
+<p>
+    <h4>Vessel Flown With</h4>
+    <a href="{{ url_for('aircraft_directory.index', vessel_ID=vessel_ID) }}">{{ model }}</a> 
+     
+</p>
+{% endif %}
 <p>
     <a href="{{ url_for('flight_directory.edit', flight_ID=flight_ID) }}">Edit</a>
     <a href="{{ url_for('flight_directory.delete', flight_ID=flight_ID) }}">Delete</a>

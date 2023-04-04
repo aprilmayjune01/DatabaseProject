@@ -47,8 +47,40 @@ def get_flight(flight_ID):
     except Exception as e:
         print(e)
         return None
-    
     return context
+
+def get_flown_with_vessel(flight_ID):
+    """
+    """
+
+    context = dict()
+
+    select_query = f"""
+    SELECT fv.aircraft_ID, fv.flight_ID, a.model
+    FROM flown_with_vessel fv
+    JOIN aircraft a ON a.vessel_ID = fv.aircraft_ID
+    WHERE fv.flight_ID = '{flight_ID}'
+    """
+
+    try: 
+        cursor = g.conn.execute(text(select_query))
+        result = cursor.fetchone()
+        cursor.close()
+    except Exception as e:
+        print(e)
+        return None
+
+    if result is not None:
+        context = {
+            "aircraft_ID": result[0],
+            "flight_ID": result[1],
+            "model": result[2],
+        }
+
+    return context
+
+
+    
 
 def get_airlines():
     """
@@ -180,8 +212,13 @@ def view(flight_ID):
     airline = get_airline(context["airline_ID"])
     if airline is None or len(airline) == 0:
         return redirect(url_for("flight_directory.index", error="Unable to view flight. Please try again."))
+
+    flown_with_vessel = get_flown_with_vessel(flight_ID)
+    if flown_with_vessel is None:
+        return redirect(url_for("flight_directory.index"))
     
     context.update(airline)
+    context.update(flown_with_vessel)
     
     return render_template("view_flight.html", **context)
 
