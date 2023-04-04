@@ -204,20 +204,7 @@ def view(personal_ID):
 
     return render_template('view_employments.html', **context)
 
-@bp.route('/manage/<personal_ID>', methods=['GET', 'POST'])
-def manage(personal_ID):
-    """ Edit employment details for an aircraft staff member """
 
-    context = get_employment_data(personal_ID)
-
-    if context is None:
-        return redirect(url_for('employments.index'))
-    
-    if request.method == 'GET':
-        return render_template('edit_employment.html', **context)
-    
-    if request.method == 'POST':
-        return redirect(url_for('employments.index'))
     
 
 
