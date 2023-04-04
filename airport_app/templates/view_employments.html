@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Employment data for {{ first_name }} {{last_name}}</h1>
+
+    Employers:
+    {% if employer_IDs|length == 0 %}
+        <p>This person has no employments recorded.</p>
+    {% else %}
+    <ul>
+        {% for i in range(employer_IDs|length) %}
+            <li><a href="{{ url_for('airline_directory.view', airline_ID=employer_IDs[i]) }}">{{ employer_names[i] }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    Flights worked:
+    {% if flights_worked_IDs|length == 0 %}
+        <p>This person has no flights recorded.</p>
+    {% else %}
+    <ul>
+        {% for i in range(flights_worked_IDs|length) %}
+            <li><a href="{{ url_for('flight_directory.view', flight_ID=flights_worked_IDs[i]) }}">{{ flights_worked_origins[i] }} to {{ flights_worked_destinations[i] }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if is_pilot %}
+        Flights piloted:
+        {% if flights_piloted_IDs|length == 0 %}
+            <p>This person has no flight pilotings recorded.</p>
+        {% else %}
+        <ul>
+            {% for i in range(flights_piloted_IDs|length) %}
+                <li><a href="{{ url_for('flight_directory.view', flight_ID=flights_piloted_IDs[i]) }}">{{ flights_piloted_origins[i] }} to {{ flights_piloted_destinations[i] }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endif %}
+
+    <a href="{{ url_for('employments.index') }}">Back to employments list.</a>
+
+
+{% endblock %}

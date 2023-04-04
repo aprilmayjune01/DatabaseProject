@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Employment Data</h1>
+    This is a directory of all employments in the database. Click on an employment to view more information about it.
+
+    {% for i in range(personal_IDs|length) %}
+        <p>
+            <h3>{{ first_names[i] }} {{ last_names[i] }}</h3>
+            <a href="{{ url_for('employments.view', personal_ID=personal_IDs[i]) }}">View employment data</a>
+        </p>
+    {% endfor %}
+
+{% endblock %}
